@@ -1,5 +1,6 @@
 import { fetchNotes } from "../../services/noteService";
 import NoteList from "../NoteList/NoteList";
+import NoteModal from "../NoteModal/NoteModal";
 import Pagination from "../Pagination/Pagination";
 import SearchBox from "../SearchBox/SearchBox";
 import css from "./App.module.css";
@@ -11,9 +12,10 @@ export default function App() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [query, setQuery] = useState<string | undefined>(undefined);
   const [debouncedQuery] = useDebounce(query, 1000);
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
 
   const loadNotes = useQuery({
-    queryKey: ["Notes", currentPage, debouncedQuery],
+    queryKey: ["Notes", currentPage, debouncedQuery, modalOpen],
     queryFn: () => fetchNotes(currentPage, debouncedQuery),
     placeholderData: keepPreviousData,
   });
@@ -38,9 +40,12 @@ export default function App() {
             currentPage={currentPage}
           />
         )}
-        <button className={css.button}>Create note +</button>
+        <button className={css.button} onClick={() => setModalOpen(true)}>Create note +</button>
       </header>
+      {loadNotes.isPending && !loadNotes.isSuccess && <p className={css.loading}>Loading your notes...</p>}
+      {loadNotes.isError && <p className={css.loaderror}>An error occured: { JSON.stringify(loadNotes.error) }, please reload the page!</p>}
       {loadNotes.isSuccess && <NoteList notes={loadNotes.data.notes} />}
+      {modalOpen && <NoteModal onClose={() => setModalOpen(false)}/>}
     </div>
   );
 }
