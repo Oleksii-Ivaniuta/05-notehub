@@ -7,38 +7,31 @@ interface NoteHubResponce {
 }
 
 interface NoteHubSearchParams {
-  parameters: {
-    search?: string;
-    tag?: string;
-    page?: number;
-    perPage?: number;
-    sortBy?: string;
-  };
+  params: {
+    search?: string,
+    page: number,
+    perPage: 12,
+},
   headers: {
-    authorization: string;
-  };
+  authorization: string,
+}
 }
 
 const myToken = import.meta.env.VITE_NOTEHUB_TOKEN;
 
-export async function fetchNotes(
-  query: string = "",
-  page: number = 1,
-  perPage: number = 10
-): Promise<NoteHubResponce> {
+
+export async function fetchNotes(page: number, query?: string): Promise<NoteHubResponce> {
   const noteHubSearchParams: NoteHubSearchParams = {
-    parameters: {
+    params: {
       search: query,
       page: page,
-      perPage: perPage,
-    },
+      perPage: 12,
+  },
     headers: {
-      authorization: `Bearer ${myToken}`,
-    },
-  };
+    authorization: `Bearer ${myToken}`,
+  }}
   const responce = await axios.get(
-    "https://notehub-public.goit.study/api/notes/",
-    noteHubSearchParams
+    "https://notehub-public.goit.study/api/notes/", noteHubSearchParams 
   );
   console.log(responce.data);
 
