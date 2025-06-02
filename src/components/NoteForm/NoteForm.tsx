@@ -1,10 +1,11 @@
 import { Formik, Form, Field, ErrorMessage, type FormikHelpers } from "formik";
 import css from "./NoteForm.module.css";
 import * as Yup from "yup";
-import { createNote } from "../../services/noteService";
+import type Note from "../../types/note";
 
 interface NoteFormProps {
-  onClose: () => void;
+    onClose: () => void,
+    onSubmit: (newNote: Note) => Promise<void>
 }
 
 const NoteFormSchema = Yup.object().shape({
@@ -19,18 +20,14 @@ const NoteFormSchema = Yup.object().shape({
   tag: Yup.string().oneOf(["Todo", "Work", "Personal", "Meeting", "Shopping"]),
 });
 
-interface NewNote {
-    title: string,
-    content: string,
-    tag: string
-}
 
-export default function NoteForm({ onClose }: NoteFormProps) {
-    const handleSubmit = async (
-        values: NewNote,
-        actions: FormikHelpers<NewNote>
+
+export default function NoteForm({ onClose, onSubmit }: NoteFormProps) {
+    const handleSubmit = (
+        values: Note,
+        actions: FormikHelpers<Note>
       ) => {
-        await createNote(values);
+        onSubmit(values);
         actions.resetForm();
         onClose();
       };

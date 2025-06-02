@@ -2,12 +2,14 @@ import css from "./NoteModal.module.css";
 import { createPortal } from "react-dom";
 import { useEffect } from "react";
 import NoteForm from "../NoteForm/NoteForm";
+import type Note from "../../types/note";
 
 interface NoteModalProps {
-  onClose: () => void
+  onClose: () => void,
+  onSubmit: (newNote: Note) => Promise<void>
 }
 
-export default function NoteModal({ onClose }: NoteModalProps) {
+export default function NoteModal({ onClose, onSubmit }: NoteModalProps) {
 
   useEffect(() => {
 	  const handleKeyDown = (e: KeyboardEvent) => {
@@ -30,7 +32,7 @@ export default function NoteModal({ onClose }: NoteModalProps) {
   aria-modal="true"
 >
   <div className={css.modal}>
-    <NoteForm onClose={onClose}/>
+    <NoteForm onSubmit={onSubmit} onClose={onClose}/>
   </div>
 </div>, document.body
     )

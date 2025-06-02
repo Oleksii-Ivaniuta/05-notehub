@@ -1,4 +1,5 @@
-import { fetchNotes } from "../../services/noteService";
+import { createNote, fetchNotes } from "../../services/noteService";
+import type Note from "../../types/note";
 import NoteList from "../NoteList/NoteList";
 import NoteModal from "../NoteModal/NoteModal";
 import Pagination from "../Pagination/Pagination";
@@ -29,6 +30,10 @@ export default function App() {
     }
   };
 
+  const createNewNote = async (newNote: Note): Promise<void> => {
+    createNote(newNote);
+  };
+
   return (
     <div className={css.app}>
       <header className={css.toolbar}>
@@ -40,12 +45,26 @@ export default function App() {
             currentPage={currentPage}
           />
         )}
-        <button className={css.button} onClick={() => setModalOpen(true)}>Create note +</button>
+        <button className={css.button} onClick={() => setModalOpen(true)}>
+          Create note +
+        </button>
       </header>
-      {loadNotes.isPending && !loadNotes.isSuccess && <p className={css.loading}>Loading your notes...</p>}
-      {loadNotes.isError && <p className={css.loaderror}>An error occured: { JSON.stringify(loadNotes.error) }, please reload the page!</p>}
+      {loadNotes.isPending && !loadNotes.isSuccess && (
+        <p className={css.loading}>Loading your notes...</p>
+      )}
+      {loadNotes.isError && (
+        <p className={css.loaderror}>
+          An error occured: {JSON.stringify(loadNotes.error)}, please reload the
+          page!
+        </p>
+      )}
       {loadNotes.isSuccess && <NoteList notes={loadNotes.data.notes} />}
-      {modalOpen && <NoteModal onClose={() => setModalOpen(false)}/>}
+      {modalOpen && (
+        <NoteModal
+          onSubmit={createNewNote}
+          onClose={() => setModalOpen(false)}
+        />
+      )}
     </div>
   );
 }
