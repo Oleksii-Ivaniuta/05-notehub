@@ -1,5 +1,6 @@
 import axios from "axios";
 import type Note from "../types/note";
+import type { NewNote } from "../types/note";
 
 interface NoteHubResponce {
   notes: Note[];
@@ -8,38 +9,40 @@ interface NoteHubResponce {
 
 interface NoteHubSearchParams {
   params: {
-    search?: string,
-    page: number,
-    perPage: 12,
-},
+    search?: string;
+    page: number;
+    perPage: 12;
+  };
   headers: {
-  authorization: string,
-}
+    authorization: string;
+  };
 }
 
 const myToken = import.meta.env.VITE_NOTEHUB_TOKEN;
 
-
-export async function fetchNotes(page: number, query?: string): Promise<NoteHubResponce> {
+export async function fetchNotes(
+  page: number,
+  query?: string
+): Promise<NoteHubResponce> {
   const noteHubSearchParams: NoteHubSearchParams = {
     params: {
       search: query,
       page: page,
       perPage: 12,
-  },
+    },
     headers: {
-    authorization: `Bearer ${myToken}`,
-  }}
-  const responce = await axios.get(
-    "https://notehub-public.goit.study/api/notes/", noteHubSearchParams 
+      authorization: `Bearer ${myToken}`,
+    },
+  };
+  const responce = await axios.get<NoteHubResponce>(
+    "https://notehub-public.goit.study/api/notes/",
+    noteHubSearchParams
   );
-  console.log(responce.data);
-
   return responce.data;
 }
 
-export async function deleteNote(id: number): Promise<Note> {
-  const responce = await axios.delete(
+export async function removeNote(id: number): Promise<Note> {
+  const responce = await axios.delete<Note>(
     `https://notehub-public.goit.study/api/notes/${id}`,
     {
       headers: {
@@ -47,12 +50,11 @@ export async function deleteNote(id: number): Promise<Note> {
       },
     }
   );
-  console.log(responce.data);
   return responce.data;
 }
 
-export async function createNote(note: Note): Promise<Note> {
-  const responce = await axios.post(
+export async function createNote(note: NewNote): Promise<Note> {
+  const responce = await axios.post<Note>(
     "https://notehub-public.goit.study/api/notes/",
     note,
     {
@@ -61,6 +63,5 @@ export async function createNote(note: Note): Promise<Note> {
       },
     }
   );
-  console.log(responce.data);
   return responce.data;
 }
