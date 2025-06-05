@@ -20,6 +20,15 @@ export default function App() {
     placeholderData: keepPreviousData,
   });
 
+  const modalOpenFn = (): void => {
+    setModalOpen(true);
+  }
+
+  const modalCloseFn = (): void => {
+    setModalOpen(false);
+    setCurrentPage(1);
+  }
+
   const onChangeQuery = (event: React.ChangeEvent<HTMLInputElement>) => {
     const query = event.target.value;
     if (query === "") {
@@ -27,6 +36,7 @@ export default function App() {
     } else {
       setQuery(query);
     }
+    setCurrentPage(1);
   };
 
   return (
@@ -40,7 +50,7 @@ export default function App() {
             currentPage={currentPage}
           />
         )}
-        <button className={css.button} onClick={() => setModalOpen(true)}>
+        <button className={css.button} onClick={modalOpenFn}>
           Create note +
         </button>
       </header>
@@ -54,7 +64,7 @@ export default function App() {
         </p>
       )}
       {loadNotes.isSuccess && <NoteList notes={loadNotes.data.notes} />}
-      {modalOpen && <NoteModal onClose={() => setModalOpen(false)} />}
+      {modalOpen && <NoteModal onClose={modalCloseFn} />}
     </div>
   );
 }
