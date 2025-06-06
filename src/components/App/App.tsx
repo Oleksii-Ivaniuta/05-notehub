@@ -10,43 +10,42 @@ import { useDebounce } from "use-debounce";
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [query, setQuery] = useState<string | undefined>(undefined);
-  const [debouncedQuery] = useDebounce(query, 1000);
+  const [query, setQuery] = useState<string>("");
+  const [debouncedQuery] = useDebounce<string>(query, 1000);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
 
   const loadNotes = useQuery({
-    queryKey: ["Notes", currentPage, debouncedQuery, modalOpen],
-    queryFn: () => fetchNotes(currentPage, debouncedQuery),
+    queryKey: ["Notes", currentPage, debouncedQuery],
+    queryFn: () => fetchNotes(debouncedQuery, currentPage),
     placeholderData: keepPreviousData,
   });
 
   const modalOpenFn = (): void => {
     setModalOpen(true);
-  }
+  };
 
   const modalCloseFn = (): void => {
     setModalOpen(false);
     setCurrentPage(1);
-  }
+  };
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
 
   const onChangeQuery = (event: React.ChangeEvent<HTMLInputElement>) => {
     const query = event.target.value;
-    if (query === "") {
-      setQuery(undefined);
-    } else {
-      setQuery(query);
-    }
+    setQuery(query);
     setCurrentPage(1);
   };
 
   return (
     <div className={css.app}>
       <header className={css.toolbar}>
-        <SearchBox onChange={onChangeQuery} />
+        <SearchBox onChange={onChangeQuery} value={query} />
         {loadNotes.isSuccess && loadNotes.data.totalPages > 1 && (
           <Pagination
             pageCount={loadNotes.data.totalPages}
-            setCurrentPage={setCurrentPage}
+            setCurrentPage={handlePageChange}
             currentPage={currentPage}
           />
         )}

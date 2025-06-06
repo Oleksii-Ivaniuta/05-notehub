@@ -1,7 +1,7 @@
 import { Formik, Form, Field, ErrorMessage, type FormikHelpers } from "formik";
 import css from "./NoteForm.module.css";
 import * as Yup from "yup";
-import { type NewNote } from "../../types/note";
+import { type Note } from "../../types/note";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { createNote } from "../../services/noteService";
 import iziToast from "izitoast";
@@ -12,22 +12,20 @@ interface NoteFormProps {
 
 const NoteFormSchema = Yup.object().shape({
   title: Yup.string()
-    .min(2, "To short title")
-    .max(50, "To long title")
+    .min(3, "Too short title, min 3 symbols")
+    .max(50, "Too long title, max 50 symbols")
     .required("Title is required"),
-  content: Yup.string()
-    .min(2, "To short content")
-    .max(500, "To long content")
-    .required("Content is required"),
+  content: Yup.string().max(500, "Too long content, max 500 symbols"),
   tag: Yup.string().oneOf(["Todo", "Work", "Personal", "Meeting", "Shopping"]),
 });
 
 export default function NoteForm({ onClose }: NoteFormProps) {
   const queryClient = useQueryClient();
   const addNewNote = useMutation({
-    mutationFn: (newNoteData: NewNote) => createNote(newNoteData),
+    mutationFn: (newNoteData: Note) => createNote(newNoteData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["Notes"] });
+      onClose();
     },
     onError: () => {
       iziToast.error({
@@ -36,10 +34,9 @@ export default function NoteForm({ onClose }: NoteFormProps) {
       });
     },
   });
-  const handleSubmit = (values: NewNote, actions: FormikHelpers<NewNote>) => {
+  const handleSubmit = (values: Note, actions: FormikHelpers<Note>) => {
     addNewNote.mutate(values);
     actions.resetForm();
-    onClose();
   };
   return (
     <Formik

@@ -8,6 +8,12 @@ interface NoteModalProps {
 }
 
 export default function NoteModal({ onClose }: NoteModalProps) {
+  const handleBackdropClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (event.target === event.currentTarget) {
+      onClose();
+    }
+  };
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -16,14 +22,16 @@ export default function NoteModal({ onClose }: NoteModalProps) {
     };
 
     document.addEventListener("keydown", handleKeyDown);
+    document.body.style.overflow = "hidden";
 
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "";
     };
   }, [onClose]);
 
   return createPortal(
-    <div className={css.backdrop} role="dialog" aria-modal="true">
+    <div onClick={handleBackdropClick} className={css.backdrop} role="dialog" aria-modal="true">
       <div className={css.modal}>
         <NoteForm onClose={onClose} />
       </div>
