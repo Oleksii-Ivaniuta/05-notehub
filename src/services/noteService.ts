@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { Note } from "../types/note";
+import type { Note, NoteFormData } from "../types/note";
 
 interface NoteHubResponse {
   notes: Note[];
@@ -75,7 +75,7 @@ export async function removeNote(id: number): Promise<RemoveNoteResponse> {
   return response.data;
 }
 
-export async function createNote(note: Note): Promise<CreateNoteResponse> {
+export async function createNote(note: NoteFormData): Promise<CreateNoteResponse> {
   const response = await axios.post<CreateNoteResponse>(
     "https://notehub-public.goit.study/api/notes/",
     note,
