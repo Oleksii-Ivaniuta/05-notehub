@@ -15,7 +15,7 @@ export default function App() {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
 
   const loadNotes = useQuery({
-    queryKey: ["Notes", currentPage, debouncedQuery],
+    queryKey: ["Notes", debouncedQuery, currentPage],
     queryFn: () => fetchNotes(debouncedQuery, currentPage),
     placeholderData: keepPreviousData,
   });
@@ -26,7 +26,6 @@ export default function App() {
 
   const modalCloseFn = (): void => {
     setModalOpen(false);
-    setCurrentPage(1);
   };
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -45,7 +44,7 @@ export default function App() {
         {loadNotes.isSuccess && loadNotes.data.totalPages > 1 && (
           <Pagination
             pageCount={loadNotes.data.totalPages}
-            setCurrentPage={handlePageChange}
+            onPageChange={handlePageChange}
             currentPage={currentPage}
           />
         )}

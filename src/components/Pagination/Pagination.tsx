@@ -3,13 +3,13 @@ import css from "./Pagination.module.css";
 
 interface PaginationProps {
   pageCount: number;
-  setCurrentPage: (page: number) => void;
+  onPageChange: (page: number) => void;
   currentPage: number;
 }
 
 export default function Pagination({
   pageCount,
-  setCurrentPage,
+  onPageChange,
   currentPage,
 }: PaginationProps) {
   return (
@@ -17,7 +17,7 @@ export default function Pagination({
       pageCount={pageCount}
       pageRangeDisplayed={5}
       marginPagesDisplayed={1}
-      onPageChange={({ selected }) => setCurrentPage(selected + 1)}
+      onPageChange={({ selected }) => onPageChange(selected + 1)}
       forcePage={currentPage - 1}
       containerClassName={css.pagination}
       activeClassName={css.active}
